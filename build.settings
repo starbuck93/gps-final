@@ -1,0 +1,36 @@
+-- Supported values for orientation:
+-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
+
+settings = {
+	
+	orientation = {
+		default = "portrait",
+		supported = { "portrait", }
+	},
+
+	android =
+    {
+        usesPermissions =
+        {
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.INTERNET",
+        },
+    },
+	
+	iphone =
+    {
+        plist =
+        {
+            CFBundleDisplayName = "GPS Final App",
+            CFBundleName = "GPS Final App",
+            CFBundleIconFiles = {},  --required
+            UILaunchImages = {},     --required
+            UIApplicationExitsOnSuspend = false,
+            UIPrerenderedIcon = true,
+            UIStatusBarHidden = true,
+            MinimumOSVersion = "6.0",
+        },
+    },
+
+}
