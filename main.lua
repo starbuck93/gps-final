@@ -11,10 +11,10 @@ local localGroup = display.newGroup()
 -----------------------
 
 --globals
-ipTextGet = "54.84.5.240" --for testing, Adam's server is "54.84.5.240"
-numPlayersGet = 2 --for testing, use any number like 2
+ipTextGet = "52.4.3.210" --for testing, Adam's server is "54.84.5.240"
+numPlayersGet = 1 --for testing, use any number like 2
 getKeyValue = "lol" --this is a given apparently
-numTeamsGet = 1
+numTeamsGet = 2
 
 local image = display.newImageRect( "map2.png", (display.contentWidth-100)*0.8017446, (display.contentWidth-100) ) --1011x1261
 image.anchorY = 0
@@ -41,7 +41,7 @@ localGroup:insert(mainText)
 mainText:setFillColor( 1, 0.2, 0.2 )
 
 local help1 = display.newText {
-    text = "Enter IP Address like '54.84.5.240'",     
+    text = "Enter IP Address like '52.4.3.210'",     
     x = display.contentCenterX,
     y = display.contentHeight-200,
     width = display.contentCenterX*2,     
@@ -54,7 +54,7 @@ localGroup:insert(help1)
 
 local ipText = native.newTextField( display.contentCenterX, display.contentHeight-150, 220, 36 )
 ipText.inputType = "text"
-ipText.placeholder = "54.84.5.240"
+ipText.placeholder = "52.4.3.210"
 localGroup:insert(ipText)
 
 

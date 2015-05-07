@@ -247,7 +247,7 @@ local connection =
 {
     host = ip,
     port = 7173,
-    handle = "adam",
+    handle = "rap10c",
     data = 
     {
         maxPlayers = player_cnt,
