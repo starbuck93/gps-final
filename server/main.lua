@@ -1,5 +1,61 @@
-local shapes = require('shapes')
+--candy lab { acc = 4, lat = 32.46771913, dir = 132.60000610352, long = -99.70717037, time = 1431035056.197, alt = 461, speed = 2.2289459705353 }
+--end of the hall { acc = 6, lat = 32.46786666, dir = 0, long = -99.70718488, time = 1431035209, alt = 496, speed = 0 }
 
+function makePoint ( inX, inY )
+   return { shape="point", point= {x= inX, y= inY} }
+end
+
+function makeLine ( p1, p2 )
+   return { shape="line", points= {p1, p2} }
+end
+
+function makePolygon ( points )
+   return { shape="polygon", points= points}
+end
+
+function makePolyline ( points )
+   return { shape="polyline", points= points }
+end
+
+function makeCircle ( center, radius )
+   return { shape="circle", center= center, radius= radius}
+end
+
+function shapeToString ( inShape )
+--   p ( 'shapeToString begin')
+   s = ""
+   if inShape ~= nil then
+      if inShape.shape then
+	 if inShape.shape == 'line' then
+	    local p1 = inShape.points[1].point
+	    local p2 = inShape.points[2].point
+	    s = "line ".. p1.x.. ','.. p1.y.. ' '.. p2.x.. ','.. p2.y
+	 elseif inShape.shape == 'point' then
+	    s = "point ".. inShape.point.x.. ','.. inShape.point.y
+	 elseif inShape.shape == 'polyline' then
+	    local pts= inShape.points
+	    s = 'polygon '
+	    for i=1,#pts do
+	       s = s.. pts[i].point.x.. ','.. pts[i].point.y.. ' '
+	    end
+	 elseif inShape.shape == 'polygon' then
+	    local pts= inShape.points
+	    s = 'polyline '
+	    for i=1,#pts do
+	       s = s.. pts[i].point.x.. ','.. pts[i].point.y.. ' '
+	    end
+	 elseif inShape.shape == 'circle' then
+	    local pt= inShape.center.point
+	    s= 'circle '.. pt.x.. ','.. pt.y.. ' radius '.. inShape.radius
+	 end
+      end
+   end
+   return s
+end
+
+
+function scaleMetersToLongLat ( shape )
+end
 --======================================================================--
 --== Coronium GS
 --======================================================================--
@@ -53,7 +109,7 @@ local function startGame( game, players )
 	-- 	end
 
 	-- end
-	game:broadcast( {  } )
+	-- game:broadcast( {  } )
 end
 
 local function checkTeams( game, players )
@@ -96,20 +152,31 @@ local function onGameStart( game, players )
 	    data.team = allTeams[index]
 	    playersTable[key]:setPlayerData( data )
 	    playersTable[key]:send( { yourTeam = allTeams[index] } )
+	    teamGameTable[index].players = {}
 	    teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
 	    						--to nerf through this array we will need to mod by the number of teams
 	    i = i+1
 	end
 
-	-- local x = {1=100,2=200,3=300,4=400,5=500}
-	-- local y = {1=100,2=200,3=300,4=400,5=500}
+	x = {}
+	x[1]=100 --x coordinate in Meters of the candy lab
+	x[2]=200
+	x[3]=300
+	x[4]=400
+	x[5]=500
+	y = {}
+	y[1]=100 --y coordinate in Meters of the candy lab
+	y[2]=200
+	y[3]=300
+	y[4]=400
+	y[5]=500
 
 	for i=1,game.data.teams do --set up the main teams data table
 		teamGameTable[i] = {
 			name = allTeams[i], 
 			roundsComplete = 0, 
 			currentChallenge = { 
-				point=shapes.makePoint(x[i],y[i]),
+				point=makePoint(x[i],y[i]),
 				shape="point",
 				done=false 
 			},
@@ -121,8 +188,8 @@ local function onGameStart( game, players )
 
 	local player_cnt = game:getPlayerCount()
 
-	startGame(game,players)
-	checkTeams(game,players)
+	-- startGame(game,players)
+	-- checkTeams(game,players)
 
 end
 
@@ -146,22 +213,23 @@ local function onClientData( client, data )
 	if (data.play) then
 		autoNegotiate( client,tonumber(blee.maxPlayers),tonumber(blee.numTeams))
 	elseif (data.gpsUpdate) then
-		setData = client:getPlayerData()
+		local setData = client:getPlayerData()
 		setData.currentPos = { lat = data.latitude, long = data.longitude, accuracy = data.accuracy }
 		client:setPlayerData( setData )
+
+		local here = { 32.46771913, -99.70717037 } --accuracy = 4
+
+
+	    local latData = (( data.latitude - here[1] ) * 110895.047493596 )
+	    p(latData)
+	    local longData = (( data.longitude - here[2] ) * 94007.9131628372 )
+	    p(longData)
 	end
 
 -------------------------------------
 ---conversion from lat/long to meters
 -------------------------------------
 
-	local here = { 32.467658996582, -99.707122802734 }
-		
-    local latData = (( data.lat - here[1] ) * 110895.047493596 )
-    p(latData)
-
-    local longData = (( data.long - here[2] ) * 94007.9131628372 )
-    p(longData)
 end
 
 local function onClientConnect( client )
