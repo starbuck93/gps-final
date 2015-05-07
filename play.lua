@@ -15,6 +15,7 @@ local scene = composer.newScene()
 currentLocation = {longitude = 0, latitude = 0, accuracy = 100}
 
 
+
 function updateLocation( event )
     p(event)
     currentLocation.latitude = event.latitude
@@ -113,6 +114,37 @@ local function onClientData( event )
         yourTeam.text = "Team " .. data.yourTeam.team
         yourTeam:setFillColor(data.yourTeam.color)
     end
+
+--ADD TARGET--
+--Reason it's under on client data, is that when he is at the varified location,
+--the target moves to another place.
+-- circleGroup = display.newGroup( )
+
+
+        -- local function circleTarget( ... )
+        -- local circ1 = display.newCircle( display.contentCenterY, display.contentCenterX, 30 )
+        -- circ1:setFillColor( 1,1,1 )
+        -- local circ2 = display.newCircle( display.contentCenterY, display.contentCenterX, 27 )
+        -- circ2:setFillColor( 1,0,0 )
+        -- local circ3 = display.newCircle( display.contentCenterY, display.contentCenterX, 15 )
+        -- circ3:setFillColor( 1,1,1 )
+
+        -- gameGroup:insert(circ1)
+        -- gameGroup:insert(circ2)
+        -- gameGroup:insert(circ3)
+        -- circleGroup:insert( circ1 )
+        -- circleGroup:insert( circ2 )
+        -- circleGroup:insert( circ3 )
+        -- circleGroup.anchorChildren = true
+        -- circleGroup.x = display.contentCenterX
+        -- circleGroup.y = display.contentCenterX
+        -- circleGroup.anchorX = .5
+        -- circleGroup.anchorY = .5
+
+
+       -- transition.scaleBy( circleGroup, {xScale = .5 , yScale = .5, time=1500})
+       -- circleTarget()
+
 end
 
 local function onClientConnect( event )

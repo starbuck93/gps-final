@@ -47,12 +47,12 @@ end
 
 local function startGame( game, players )
 	
-	for key,value in players do
-		if()
+	-- for key,value in players do
+	-- 	if()
 			
-		end
+	-- 	end
 
-	end
+	-- end
 	game:broadcast( {  } )
 end
 
@@ -101,8 +101,8 @@ local function onGameStart( game, players )
 	    i = i+1
 	end
 
-	local x = {1=100,2=200,3=300,4=400,5=500}
-	local y = {1=100,2=200,3=300,4=400,5=500}
+	-- local x = {1=100,2=200,3=300,4=400,5=500}
+	-- local y = {1=100,2=200,3=300,4=400,5=500}
 
 	for i=1,game.data.teams do --set up the main teams data table
 		teamGameTable[i] = {
@@ -150,6 +150,18 @@ local function onClientData( client, data )
 		setData.currentPos = { lat = data.latitude, long = data.longitude, accuracy = data.accuracy }
 		client:setPlayerData( setData )
 	end
+
+-------------------------------------
+---conversion from lat/long to meters
+-------------------------------------
+
+	local here = { 32.467658996582, -99.707122802734 }
+		
+    local latData = (( data.lat - here[1] ) * 110895.047493596 )
+    p(latData)
+
+    local longData = (( data.long - here[2] ) * 94007.9131628372 )
+    p(longData)
 end
 
 local function onClientConnect( client )
