@@ -16,6 +16,8 @@ currentLocation = {longitude = 0, latitude = 0, accuracy = 100}
 
 
 
+
+
 function updateLocation( event )
     p(event)
     currentLocation.latitude = event.latitude
@@ -75,6 +77,33 @@ function onGameStart( event )
     })
     yourTeam:setFillColor(.7,0,.5)
 
+    circleGroup = display.newGroup( )
+    local circ1 = display.newCircle( display.contentCenterY, display.contentCenterX, 7 )
+    circ1:setFillColor( 1,1,1 )
+    local circ2 = display.newCircle( display.contentCenterY, display.contentCenterX, 5 )
+    circ2:setFillColor( 1,0,0 )
+    local circ3 = display.newCircle( display.contentCenterY, display.contentCenterX, 2 )
+    circ3:setFillColor( 1,1,1 )
+
+    circleGroup:insert( circ1 )
+    circleGroup:insert( circ2 )
+    circleGroup:insert( circ3 )
+    circleGroup.anchorChildren = true
+    circleGroup.x = display.contentCenterX
+    circleGroup.y = display.contentCenterX
+    circleGroup.anchorX = .5
+    circleGroup.anchorY = .5
+    
+    -->>atrium
+    transition.to( circleGroup, {time=1500, x=(display.contentCenterX+32), y=(display.contentCenterY+115)} )
+
+    -- if event.data.location[1] == place[1] then
+    -- >>down the hall    transition.to( circleGroup, {time=1500, x=(display.contentCenterX+18), y=(display.contentCenterY+91)} )
+    -- end
+
+    -- if event.data.location[2] == place[2] then
+    --  candy lab>>   transition.to( circleGroup, {time=1500, x=(display.contentCenterX+18), y=(display.contentCenterY+108)} )
+    -- end
 end
 
 function onGameData( event )
@@ -115,35 +144,10 @@ local function onClientData( event )
         yourTeam:setFillColor(data.yourTeam.color)
     end
 
+
 --ADD TARGET--
 --Reason it's under on client data, is that when he is at the varified location,
 --the target moves to another place.
--- circleGroup = display.newGroup( )
-
-
-        -- local function circleTarget( ... )
-        -- local circ1 = display.newCircle( display.contentCenterY, display.contentCenterX, 30 )
-        -- circ1:setFillColor( 1,1,1 )
-        -- local circ2 = display.newCircle( display.contentCenterY, display.contentCenterX, 27 )
-        -- circ2:setFillColor( 1,0,0 )
-        -- local circ3 = display.newCircle( display.contentCenterY, display.contentCenterX, 15 )
-        -- circ3:setFillColor( 1,1,1 )
-
-        -- gameGroup:insert(circ1)
-        -- gameGroup:insert(circ2)
-        -- gameGroup:insert(circ3)
-        -- circleGroup:insert( circ1 )
-        -- circleGroup:insert( circ2 )
-        -- circleGroup:insert( circ3 )
-        -- circleGroup.anchorChildren = true
-        -- circleGroup.x = display.contentCenterX
-        -- circleGroup.y = display.contentCenterX
-        -- circleGroup.anchorX = .5
-        -- circleGroup.anchorY = .5
-
-
-       -- transition.scaleBy( circleGroup, {xScale = .5 , yScale = .5, time=1500})
-       -- circleTarget()
 
 end
 
