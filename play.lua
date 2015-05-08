@@ -15,9 +15,6 @@ local scene = composer.newScene()
 currentLocation = {longitude = 0, latitude = 0, accuracy = 100}
 
 
-
-
-
 function updateLocation( event )
     p(event)
     currentLocation.latitude = event.latitude
@@ -144,8 +141,7 @@ local function onClientData( event )
     p( event.data )
     local data = event.data
     if yourTeam and data.yourTeam then
-        yourTeam.text = "Team " .. data.yourTeam.team
-        yourTeam:setFillColor(data.yourTeam.color)
+        yourTeam.text = "Team " .. data.yourTeam
     end
 
 
@@ -253,7 +249,7 @@ local connection =
 {
     host = ip,
     port = 7173,
-    handle = "rpa01c",
+    handle = "adam",
     data = 
     {
         maxPlayers = player_cnt,

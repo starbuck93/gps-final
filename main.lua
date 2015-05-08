@@ -12,10 +12,9 @@ local localGroup = display.newGroup()
 
 --globals
 ipTextGet = "54.84.5.240" --for testing, Adam's server is "54.84.5.240"  52.4.3.210
-
-numPlayersGet = 1 --for testing, use any number like 2
+numPlayersGet = 2 --for testing, use any number like 2
 getKeyValue = "lol" --this is a given apparently
-numTeamsGet = 1
+numTeamsGet = 2
 
 local image = display.newImageRect( "map2.png", (display.contentWidth-100)*0.8017446, (display.contentWidth-100) ) --1011x1261
 image.anchorY = 0
@@ -41,22 +40,22 @@ local mainText = display.newText {
 localGroup:insert(mainText)
 mainText:setFillColor( 1, 0.2, 0.2 )
 
-local help1 = display.newText {
-    text = "Enter IP Address like '52.4.3.210'",     
-    x = display.contentCenterX,
-    y = display.contentHeight-200,
-    width = display.contentCenterX*2,     
-    font = native.systemFontBold,   
-    fontSize = 18,
-    align = "center"
-}
-localGroup:insert(help1)
+-- local help1 = display.newText {
+--     text = "Enter IP Address like '52.4.3.210'",     
+--     x = display.contentCenterX,
+--     y = display.contentHeight-200,
+--     width = display.contentCenterX*2,     
+--     font = native.systemFontBold,   
+--     fontSize = 18,
+--     align = "center"
+-- }
+-- localGroup:insert(help1)
 
 
-local ipText = native.newTextField( display.contentCenterX, display.contentHeight-150, 220, 36 )
-ipText.inputType = "text"
-ipText.placeholder = "52.4.3.210"
-localGroup:insert(ipText)
+-- local ipText = native.newTextField( display.contentCenterX, display.contentHeight-150, 220, 36 )
+-- ipText.inputType = "text"
+-- ipText.placeholder = "52.4.3.210"
+-- localGroup:insert(ipText)
 
 
 local help12= display.newText {
@@ -82,12 +81,10 @@ localGroup:insert(numTeams)
 
 
 local function onButtonTap( event )
-	if ( not (ipTextGet == "0") and not (numPlayersGet == 0) ) then
-			localGroup:removeSelf()
-            image:removeSelf()
-            imagebg:removeSelf()
-			composer.gotoScene( "play" )
-	end
+	localGroup:removeSelf()
+    image:removeSelf()
+    imagebg:removeSelf()
+	composer.gotoScene( "play" ) 
 end
 
 local start_button = widget.newButton( { 		
@@ -102,15 +99,15 @@ localGroup:insert(start_button)
 
 
 
-local function ipListener( event )
+-- local function ipListener( event )
 
-    if ( event.phase == "submitted" or event.phase == "ended" ) then
-        ipTextGet = event.target.text
-        native.setKeyboardFocus( numPlayers )
-    end
-end
+--     if ( event.phase == "submitted" or event.phase == "ended" ) then
+--         ipTextGet = event.target.text
+--         native.setKeyboardFocus( numPlayers )
+--     end
+-- end
 
-ipText:addEventListener( "userInput", ipListener )
+-- ipText:addEventListener( "userInput", ipListener )
 
 
 local function playerListener( event )
@@ -137,7 +134,7 @@ numTeams:addEventListener( "userInput", teamListener )
 
 
 localGroup:insert( start_button )
-localGroup:insert( ipText )
+-- localGroup:insert( ipText )
 localGroup:insert( numPlayers )
 
 

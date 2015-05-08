@@ -54,9 +54,6 @@ function shapeToString ( inShape )
 end
 
 
-function scaleMetersToLongLat ( shape )
-end
-
 --======================================================================--
 --== Coronium GS
 --======================================================================--
@@ -76,16 +73,10 @@ allTeams[6]={team="Toodle Dums", color={153/255,153/255,255} }
 allTeams[7]={team="Pollo", color={1,1,0} }
 allTeams[8]={team="Jakel's Minions", color={1,1,0} }
 allTeams[9]={team="Corona Bandits", color={1,0,127} }
-allTeams[0]={team="Danny BoBanny", color={0,153/255,0} }
+-- allTeams[0]={team="Danny BoBanny", color={0,153/255,0} }
 
-staticPoints = {}
-staticPoints[0] = { point = makePoint(0,0) }
-staticPoints[1] = { point = makePoint(0,0) }
-staticPoints[2] = { point = makePoint(0,0) }
-staticPoints[3] = { point = makePoint(0,0) }
-staticPoints[4] = { point = makePoint(0,0) }
 
-numTeamsGame = 0
+numTeamsGame = -1
 
 
 local function autoNegotiate(client,players,teams)
@@ -94,30 +85,18 @@ local function autoNegotiate(client,players,teams)
 
 	if game_count == 0 then
 		gs:createGame( client, players, {teams=teams} )
+		local game = gs:getPlayerGame(client)
+		-- p(game:getId())
+		local yellow = game:getData()
+		yellow.teams = teams
+		-- numTeamsGame = teams
+		p("autoNegotiate yellow",yellow,"yellow!!!!")
+		game:setData(yellow)
 	else
 		gs:addToGameQueue( client, players, {teams=teams})
 	end
 
-	local game = gs:getPlayerGame(client)
-	-- p(game:getId())
-	numTeamsGame = teams
-end
 
-local function startGame( game, players )
-	
-	-- for key,value in players do
-	-- 	if()
-			
-	-- 	end
-
-	-- end
-	-- game:broadcast( {  } )
-end
-
-local function checkTeams( game, players )
-	while gameNotOver do
-
-	end
 end
 
 --======================================================================--
@@ -126,7 +105,8 @@ end
 local function onGameCreate( game )
 	p( "--== Game Created ==--" )
 	p( game:getId() )
-	game:setData( { teams = tonumber(numTeamsGame) } )
+	p("game created",game:getData(),"<<<<------")
+	-- game:setData( { teams = tonumber(numTeamsGame) } )
 end
 
 local function onGameJoin( game, player )
@@ -139,32 +119,34 @@ local function onGameStart( game, players )
 	p( "Games", gs:getGameCount() )
 	p( players )
 
-	game:setData( { teams = numTeamsGame } )
+	-- game:setData( { teams = numTeamsGame } )
 	local playersTable = game:getPlayers()
 	-- p(playersTable)
-	p(game:getData())
+	p("Game Started data",game:getData(),"<<<<<<------")
 
 	teamGameTable = {}
 
 	local i = 1
 	for key,value in pairs(playersTable) do 
 
-		index = i%game.data.teams
+		index = i%game.data.teams+1
 	    data = playersTable[key]:getPlayerData()
-	    data.team = allTeams[index]
+	    data.team = allTeams[index].team
+	    p("client is on this team",allTeams[index].team)
 	    data.done = false
 	    playersTable[key]:setPlayerData( data )
 	    p(index,data)
-	    playersTable[key]:send( { yourTeam = allTeams[index] } )
+	    playersTable[key]:send( { yourTeam = allTeams[index].team } )
 	    -- teamGameTable[index].players = {}
 	    -- teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
 	    						--to nerf through this array we will need to mod by the number of teams
 	    i = i+1
 	end
 
+	p("Here are the team number",game.data.teams)
 	for i=1,game.data.teams do --set up the main teams data table
 		teamGameTable[i] = {
-			name = allTeams[i], 
+			name = allTeams[i].team, 
 			roundsComplete = 0, 
 			currentChallenge = { 
 				name="CandyLab",
@@ -178,7 +160,9 @@ local function onGameStart( game, players )
 	end
 
 
-	game:setData( { teamData = teamGameTable } )
+	local asdf = game:getData()
+	asdf.teamData = teamGameTable
+	game:setData( asdf )
 
 	local player_cnt = game:getPlayerCount()
 
@@ -214,19 +198,23 @@ local function onClientData( client, data )
 		setData.currentPos = { lat = data.gpsUpdate.latitude, long = data.gpsUpdate.longitude, accuracy = data.gpsUpdate.accuracy }
 		client:setPlayerData( setData )
 		blee = client:getPlayerData()
-		p(blee)
 
 		--which location your team is currently on
-		local thisTeam = client:getPlayerData().yourTeam
+		local myTeam = client:getPlayerData().team
 		local teamIndex = -1
-		local goal
-		for i=1,tonumber(game.data.teams) do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
-			if (game.data.teamData[i].name == thisTeam) then
+		local goal = {}
+		p("This is how many teams:",game:getData().teams)
+		for i=1,game:getData().teams do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
+			p("i = ", i, "<<<---=-=-=-=-=-")
+			p("teamName",game.data.teamData[i])
+			p("thisteam",myTeam)
+			if (game.data.teamData[i].name == myTeam) then
 				teamIndex = i
+				p("IMPORTNATASD",teamIndex)
 				goal = game.data.teamData[teamIndex].currentChallenge
 			end 
 		end
-
+		p("There should be data here ---->>>>",game.data.teamData[teamIndex],"<<<<----")
 	    -- local latData = (( data.latitude - goal.pointX ) * 110895.047493596 )
 	    -- local longData = (( data.longitude - goal.pointY ) * 94007.9131628372 )
 
@@ -234,15 +222,15 @@ local function onClientData( client, data )
 	    -- we need to take into account the accuracy of the GPS and the delta that we're given
 	    --convert the delta to GPS decimal stuff
 	    local delta = goal.accuracy/11
-	    delta = ".000" .. delta
+	    delta = delta*(1/1000)
 	    delta = tonumber(delta)
 
 	    local clientAcc = blee.currentPos.accuracy/11
-	    clientAcc = ".000" .. clientAcc
+	    clientAcc = clientAcc*(1/1000)
 	    clientAcc = tonumber(clientAcc)
 
-	    if( ((blee.currentPos.lat+clientAcc <= goal.lat+delta) and (blee.currentPos.lat+clientAcc >= goal.lat-delta)) and ((blee.currentPos.long+clientAcc <= goal.long+delta) and (blee.currentPos.long+clientAcc >= goal.long-delta)) or
-	    	((blee.currentPos.lat-clientAcc <= goal.lat+delta) and (blee.currentPos.lat-clientAcc >= goal.lat-delta)) and ((blee.currentPos.long-clientAcc <= goal.long+delta) and (blee.currentPos.long-clientAcc >= goal.long-delta))) then
+	    if( ((blee.currentPos.lat+clientAcc <= goal.pointY+delta) and (blee.currentPos.lat+clientAcc >= goal.pointY-delta)) and ((blee.currentPos.long+clientAcc <= goal.pointX+delta) and (blee.currentPos.long+clientAcc >= goal.pointX-delta)) or
+	    	((blee.currentPos.lat-clientAcc <= goal.pointY+delta) and (blee.currentPos.lat-clientAcc >= goal.pointY-delta)) and ((blee.currentPos.long-clientAcc <= goal.pointX+delta) and (blee.currentPos.long-clientAcc >= goal.pointX-delta))) then
 
 	    	blee.done = true
 	    	client:setPlayerData( blee )
@@ -259,15 +247,15 @@ local function onClientData( client, data )
 	    if(blee.done) then
 			for key,value in pairs(playersTable) do 
 			    teammate = playersTable[key]:getPlayerData()
-			    if (teammate.team == blee.team and not (teammate == blee)) then
+			    if (teammate.team == blee.team) then --and not (teammate == blee))
 		    		isMyTeamDone[j] = teammate.done
 		    		j = j + 1
 			    end
 			end
 		end
-		p(isMyTeamDone)
+		p("is my team done?",isMyTeamDone,"<<<<<<<<<<<<<<<<<<<<")
 		for i=1,j do
-			if ( not (isMyTeamDone[i].done == true) ) then
+			if ( not (isMyTeamDone[i] == true) ) then
 				break
 			end
 			--if I've reached this point then that means the team is done and we can move on to the next challenge
