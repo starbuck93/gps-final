@@ -183,24 +183,24 @@ local function onGameStart( game, players )
 	end
 
 	x = {}
-	x[1]=100 --x coordinate in Meters of the candy lab
+	x[1]=32.46771913  --x coordinate in Meters of the candy lab
 	x[2]=200
 	x[3]=300
-	x[4]=400
-	x[5]=500
+
 	y = {}
-	y[1]=100 --y coordinate in Meters of the candy lab
+	y[1]=-99.70717037 --y coordinate in Meters of the candy lab
 	y[2]=200
 	y[3]=300
-	y[4]=400
-	y[5]=500
 
 	for i=1,game.data.teams do --set up the main teams data table
 		teamGameTable[i] = {
 			name = allTeams[i], 
 			roundsComplete = 0, 
 			currentChallenge = { 
-				point=makePoint(x[i],y[i]),
+				name="CandyLab"
+				pointX=x[i],
+				pointY=y[i],
+				accuracy = 6,
 				shape="point",
 				done=false 
 			},
