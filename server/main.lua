@@ -236,24 +236,58 @@ local function onClientData( client, data )
 
 	if (data.play) then
 		autoNegotiate( client,tonumber(blee.maxPlayers),tonumber(blee.numTeams))
+
 	elseif (data.gpsUpdate) then
+
 		local setData = client:getPlayerData()
 		setData.currentPos = { lat = data.latitude, long = data.longitude, accuracy = data.accuracy }
 		client:setPlayerData( setData )
 
-		local here = { 32.46771913, -99.70717037 } --accuracy = 4
+		local locations =  { candyLab = { lat = 32.46771913, long = -99.70717037 }, endOfHall = { lat = 32.46786666, long = -99.70718488 } } --accuracy = 4 or 7
+		--locations.candyLab.lat
+
+		--which location your team is currently on
+		local thisTeam = client:getPlayerData().yourTeam
+		local teamIndex = -1
+
+		for i=1,game.data.teams do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
+			if (game.data.teamData[i].name == thisTeam) then
+				teamIndex = i
+				goal = game.data.teamData[i].currentChallenge
+			end 
+		end
+
+	    -- local latData = (( data.latitude - goal.pointX ) * 110895.047493596 )
+	    -- local longData = (( data.longitude - goal.pointY ) * 94007.9131628372 )
 
 
-	    local latData = (( data.latitude - here[1] ) * 110895.047493596 )
-	    p(latData)
-	    local longData = (( data.longitude - here[2] ) * 94007.9131628372 )
-	    p(longData)
+
+	    --if your team is at the location, move the location to the next one!
+	    if(myTeam.currentChallenge.done)
+	    	local blue = game:getData()
+	    	blue.teamData[teamIndex].roundsComplete = blue.teamData[teamIndex].roundsComplete + 1
+	    	
+	    	if( blue.teamData[teamIndex].roundsComplete == 1) then
+	    		blue.teamData[teamIndex].currentChallenge.name = "southSideMaybee"
+	    		blue.teamData[teamIndex].currentChallenge.pointX=x
+	    		blue.teamData[teamIndex].currentChallenge.pointY=y
+	    		blue.teamData[teamIndex].currentChallenge.accuracy = 6
+	    	elseif ( blue.teamData[teamIndex].roundsComplete == 2 ) then
+	    		blue.teamData[teamIndex].currentChallenge.name = "stuff"
+	    		blue.teamData[teamIndex].currentChallenge.pointX=x
+	    		blue.teamData[teamIndex].currentChallenge.pointY=y
+	    		blue.teamData[teamIndex].currentChallenge.accuracy = 8
+	    	end
+    		
+    		blue.teamData[teamIndex].done = false
+
+    		game:setData(blue) --return the data
+	    end
+
 	end
-end
 
--------------------------------------
----conversion from lat/long to meters
--------------------------------------
+
+end
 
 
 
