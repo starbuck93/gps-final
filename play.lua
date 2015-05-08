@@ -23,7 +23,7 @@ function updateLocation( event )
     currentLocation.latitude = event.latitude
     currentLocation.longitude = event.longitude
     currentLocation.accuracy = event.accuracy
-    gs:send(currentLocation)
+    gs:send({gpsUpdate=currentLocation})
 end
 
 -- -----------------------------------------------------------------------------------------------------------------

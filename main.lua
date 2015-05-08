@@ -12,7 +12,7 @@ local localGroup = display.newGroup()
 
 --globals
 ipTextGet = "54.84.5.240" --for testing, Adam's server is "54.84.5.240"
-numPlayersGet = 1 --for testing, use any number like 2
+numPlayersGet = 2 --for testing, use any number like 2
 getKeyValue = "lol" --this is a given apparently
 numTeamsGet = 1
 
