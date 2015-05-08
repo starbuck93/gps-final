@@ -51,6 +51,10 @@ end
 function onGameStart( event )
     p( "game started" )
 
+    --GPS stuff starts here
+    Runtime:addEventListener( "location", updateLocation )
+
+
     gameGroup = display.newGroup()
     local image = display.newImageRect( "map2.png", (display.contentWidth+50)*0.8017446, (display.contentWidth+50) ) --1011x1261
     -- image.anchorY = 0
@@ -184,8 +188,6 @@ local function onClientConnect( event )
     connect_grp:insert(b1)
     connect_grp:insert(asd1)
 
-    --GPS stuff starts here
-    Runtime:addEventListener( "location", updateLocation )
 
 
 end

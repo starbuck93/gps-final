@@ -99,7 +99,7 @@ local function autoNegotiate(client,players,teams)
 	end
 
 	local game = gs:getPlayerGame(client)
-	p(game:getId())
+	-- p(game:getId())
 	numTeamsGame = teams
 end
 
@@ -126,7 +126,7 @@ end
 local function onGameCreate( game )
 	p( "--== Game Created ==--" )
 	p( game:getId() )
-	game:setData( { teams = numTeamsGame } )
+	game:setData( { teams = tonumber(numTeamsGame) } )
 end
 
 local function onGameJoin( game, player )
@@ -141,25 +141,23 @@ local function onGameStart( game, players )
 
 	game:setData( { teams = numTeamsGame } )
 	local playersTable = game:getPlayers()
-	p(playersTable)
+	-- p(playersTable)
 	p(game:getData())
 
 	teamGameTable = {}
-	
-	for i, game.data.teams do
-		teamGameTable[i].players = {}
-	end
 
 	local i = 1
 	for key,value in pairs(playersTable) do 
 
-		index = game.data.teams%i
+		index = i%game.data.teams
 	    data = playersTable[key]:getPlayerData()
 	    data.team = allTeams[index]
 	    data.done = false
 	    playersTable[key]:setPlayerData( data )
+	    p(index,data)
 	    playersTable[key]:send( { yourTeam = allTeams[index] } )
-	    teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
+	    -- teamGameTable[index].players = {}
+	    -- teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
 	    						--to nerf through this array we will need to mod by the number of teams
 	    i = i+1
 	end
@@ -205,6 +203,7 @@ local function onClientData( client, data )
 	p( data )
 
 	local blee = client:getPlayerData()
+	local game = gs:getPlayerGame( client )
 
 	if (data.play) then
 		autoNegotiate( client,tonumber(blee.maxPlayers),tonumber(blee.numTeams))
@@ -212,7 +211,7 @@ local function onClientData( client, data )
 	elseif (data.gpsUpdate) then
 
 		local setData = client:getPlayerData()
-		setData.currentPos = { lat = data.latitude, long = data.longitude, accuracy = data.accuracy }
+		setData.currentPos = { lat = data.gpsUpdate.latitude, long = data.gpsUpdate.longitude, accuracy = data.gpsUpdate.accuracy }
 		client:setPlayerData( setData )
 		blee = client:getPlayerData()
 		p(blee)
@@ -221,7 +220,7 @@ local function onClientData( client, data )
 		local thisTeam = client:getPlayerData().yourTeam
 		local teamIndex = -1
 		local goal
-		for i=1,game.data.teams do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
+		for i=1,tonumber(game.data.teams) do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
 			if (game.data.teamData[i].name == thisTeam) then
 				teamIndex = i
 				goal = game.data.teamData[teamIndex].currentChallenge
@@ -266,6 +265,7 @@ local function onClientData( client, data )
 			    end
 			end
 		end
+		p(isMyTeamDone)
 		for i=1,j do
 			if ( not (isMyTeamDone[i].done == true) ) then
 				break
