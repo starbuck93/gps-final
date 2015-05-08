@@ -12,9 +12,10 @@ local localGroup = display.newGroup()
 
 --globals
 ipTextGet = "54.84.5.240" --for testing, Adam's server is "54.84.5.240"  52.4.3.210
+
 numPlayersGet = 2 --for testing, use any number like 2
 getKeyValue = "lol" --this is a given apparently
-numTeamsGet = 2
+numTeamsGet = 1
 
 local image = display.newImageRect( "map2.png", (display.contentWidth-100)*0.8017446, (display.contentWidth-100) ) --1011x1261
 image.anchorY = 0

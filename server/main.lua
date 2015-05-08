@@ -242,7 +242,9 @@ local function onClientData( client, data )
 	    clientAcc = ".000" .. clientAcc
 	    clientAcc = tonumber(clientAcc)
 
-	    if( (blee.currentPos.lat+clientAcc == goal.lat+delta) and (blee.currentPos.long+clientAcc == goal.long+delta) or (blee.currentPos.lat-clientAcc == goal.lat+delta) and (blee.currentPos.long-clientAcc == goal.long+delta) or (blee.currentPos.lat+clientAcc == goal.lat-delta) and (blee.currentPos.long+clientAcc == goal.long-delta) or (blee.currentPos.lat-clientAcc == goal.lat-delta) and (blee.currentPos.long-clientAcc == goal.long-delta)) then
+	    if( ((blee.currentPos.lat+clientAcc <= goal.lat+delta) and (blee.currentPos.lat+clientAcc >= goal.lat-delta)) and ((blee.currentPos.long+clientAcc <= goal.long+delta) and (blee.currentPos.long+clientAcc >= goal.long-delta)) or
+	    	((blee.currentPos.lat-clientAcc <= goal.lat+delta) and (blee.currentPos.lat-clientAcc >= goal.lat-delta)) and ((blee.currentPos.long-clientAcc <= goal.long+delta) and (blee.currentPos.long-clientAcc >= goal.long-delta))) then
+
 	    	blee.done = true
 	    	client:setPlayerData( blee )
 	    	blee = client:getPlayerData()
