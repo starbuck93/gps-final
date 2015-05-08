@@ -1,28 +1,6 @@
 --candy lab { acc = 4, lat = 32.46771913, dir = 132.60000610352, long = -99.70717037, time = 1431035056.197, alt = 461, speed = 2.2289459705353 }
 --end of the hall { acc = 6, lat = 32.46786666, dir = 0, long = -99.70718488, time = 1431035209, alt = 496, speed = 0 }
 
-location = {{lat1, long1}, {lat2, long2}, {lat3, long3}}
-
-function place1( event )
-	if event.data.lat == location[1[1]] and event.data.long == location [1[2]] then
-	client:(add point)
-	place2()
-end
-
-function place2( event )
-	if event.data.lat == location[2[1]] and event.data.long == location [2[2]] then
-	client:(add point)
-	place3()
-end
-
-function place3( event )
-	if event.data.lat == location[3[1]] and event.data.long == location [3[2]] then
-	client:(add point)
-end
-
-points = 0
-teamPoints = 0
-
 function makePoint ( inX, inY )
    return { shape="point", point= {x= inX, y= inY} }
 end
