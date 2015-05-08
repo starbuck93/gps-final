@@ -174,6 +174,7 @@ local function onGameStart( game, players )
 		index = game.data.teams%i
 	    data = playersTable[key]:getPlayerData()
 	    data.team = allTeams[index]
+	    data.done = false
 	    playersTable[key]:setPlayerData( data )
 	    playersTable[key]:send( { yourTeam = allTeams[index] } )
 	    -- teamGameTable[index].players = {}
@@ -182,24 +183,14 @@ local function onGameStart( game, players )
 	    i = i+1
 	end
 
-	x = {}
-	x[1]=32.46771913  --x coordinate in Meters of the candy lab
-	x[2]=200
-	x[3]=300
-
-	y = {}
-	y[1]=-99.70717037 --y coordinate in Meters of the candy lab
-	y[2]=200
-	y[3]=300
-
 	for i=1,game.data.teams do --set up the main teams data table
 		teamGameTable[i] = {
 			name = allTeams[i], 
 			roundsComplete = 0, 
 			currentChallenge = { 
-				name="CandyLab"
-				pointX=x[i],
-				pointY=y[i],
+				name="CandyLab",
+				pointX=-99.70717037,
+				pointY=-99.70717037,
 				accuracy = 6,
 				shape="point",
 				done=false 
@@ -242,36 +233,74 @@ local function onClientData( client, data )
 		local setData = client:getPlayerData()
 		setData.currentPos = { lat = data.latitude, long = data.longitude, accuracy = data.accuracy }
 		client:setPlayerData( setData )
-
-		local locations =  { candyLab = { lat = 32.46771913, long = -99.70717037 }, endOfHall = { lat = 32.46786666, long = -99.70718488 } } --accuracy = 4 or 7
-		--locations.candyLab.lat
+		blee = client:getPlayerData()
+		p(blee)
 
 		--which location your team is currently on
 		local thisTeam = client:getPlayerData().yourTeam
 		local teamIndex = -1
-
+		local goal
 		for i=1,game.data.teams do --grab the current challenge(x,y) of the team by looping through until thisTeam = the game.data.teamData[i]
 			if (game.data.teamData[i].name == thisTeam) then
 				teamIndex = i
-				goal = game.data.teamData[i].currentChallenge
+				goal = game.data.teamData[teamIndex].currentChallenge
 			end 
 		end
 
 	    -- local latData = (( data.latitude - goal.pointX ) * 110895.047493596 )
 	    -- local longData = (( data.longitude - goal.pointY ) * 94007.9131628372 )
 
+	    --Let's check if the client is done
+	    -- we need to take into account the accuracy of the GPS and the delta that we're given
+	    --convert the delta to GPS decimal stuff
+	    local delta = goal.accuracy/11
+	    delta = ".000" .. delta
+	    delta = tonumber(delta)
 
+	    local clientAcc = blee.currentPos.accuracy/11
+	    clientAcc = ".000" .. clientAcc
+	    clientAcc = tonumber(clientAcc)
+
+	    if( (blee.currentPos.lat+clientAcc == goal.lat+delta) and (blee.currentPos.long+clientAcc == goal.long+delta) or (blee.currentPos.lat-clientAcc == goal.lat+delta) and (blee.currentPos.long-clientAcc == goal.long+delta) or (blee.currentPos.lat+clientAcc == goal.lat-delta) and (blee.currentPos.long+clientAcc == goal.long-delta) or (blee.currentPos.lat-clientAcc == goal.lat-delta) and (blee.currentPos.long-clientAcc == goal.long-delta)) then
+	    	blee.done = true
+	    	client:setPlayerData( blee )
+	    	blee = client:getPlayerData()
+	    end
+
+	    --check if an entire team is done
+	    --loop through every client and grab their team name
+	    --for each client, if the team name matches the current client's team then see if they're done
+	    --if they're done then alert the team data that the currentChallenge is done
+	    local isMyTeamDone = {}
+
+	    local j = 1
+	    if(blee.done) then
+			for key,value in pairs(playersTable) do 
+			    teammate = playersTable[key]:getPlayerData()
+			    if (teammate.team == blee.team and not (teammate == blee)) then
+		    		isMyTeamDone[j] = teammate.done
+		    		j = j + 1
+			    end
+			end
+		end
+		for i=1,j do
+			if ( not (isMyTeamDone[i].done == true) ) then
+				break end
+			end
+			--if I've reached this point then that means the team is done and we can move on to the next challenge
+			game.data.teamData[teamIndex].currentChallenge.done = true -- might need to get and set the game data...
+		end
 
 	    --if your team is at the location, move the location to the next one!
-	    if(myTeam.currentChallenge.done)
+	    if(game.data.teamData[teamIndex].currentChallenge.done) then
 	    	local blue = game:getData()
 	    	blue.teamData[teamIndex].roundsComplete = blue.teamData[teamIndex].roundsComplete + 1
 	    	
 	    	if( blue.teamData[teamIndex].roundsComplete == 1) then
 	    		blue.teamData[teamIndex].currentChallenge.name = "southSideMaybee"
-	    		blue.teamData[teamIndex].currentChallenge.pointX=x
-	    		blue.teamData[teamIndex].currentChallenge.pointY=y
-	    		blue.teamData[teamIndex].currentChallenge.accuracy = 6
+	    		blue.teamData[teamIndex].currentChallenge.pointX=32.46747
+	    		blue.teamData[teamIndex].currentChallenge.pointY=-99.70690
+	    		blue.teamData[teamIndex].currentChallenge.accuracy = 5
 	    	elseif ( blue.teamData[teamIndex].roundsComplete == 2 ) then
 	    		blue.teamData[teamIndex].currentChallenge.name = "stuff"
 	    		blue.teamData[teamIndex].currentChallenge.pointX=x
@@ -279,14 +308,11 @@ local function onClientData( client, data )
 	    		blue.teamData[teamIndex].currentChallenge.accuracy = 8
 	    	end
     		
-    		blue.teamData[teamIndex].done = false
+    		blue.teamData[teamIndex].currentChallenge.done = false
 
     		game:setData(blue) --return the data
 	    end
-
 	end
-
-
 end
 
 
