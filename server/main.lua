@@ -239,7 +239,9 @@ local function onClientData( client, data )
 	    clientAcc = ".000" .. clientAcc
 	    clientAcc = tonumber(clientAcc)
 
-	    if( (blee.currentPos.lat+clientAcc == goal.lat+delta) and (blee.currentPos.long+clientAcc == goal.long+delta) or (blee.currentPos.lat-clientAcc == goal.lat+delta) and (blee.currentPos.long-clientAcc == goal.long+delta) or (blee.currentPos.lat+clientAcc == goal.lat-delta) and (blee.currentPos.long+clientAcc == goal.long-delta) or (blee.currentPos.lat-clientAcc == goal.lat-delta) and (blee.currentPos.long-clientAcc == goal.long-delta)) then
+	    if( ((blee.currentPos.lat+clientAcc <= goal.lat+delta) and (blee.currentPos.lat+clientAcc >= goal.lat-delta)) and ((blee.currentPos.long+clientAcc <= goal.long+delta) and (blee.currentPos.long+clientAcc >= goal.long-delta)) or
+	    	((blee.currentPos.lat-clientAcc <= goal.lat+delta) and (blee.currentPos.lat-clientAcc >= goal.lat-delta)) and ((blee.currentPos.long-clientAcc <= goal.long+delta) and (blee.currentPos.long-clientAcc >= goal.long-delta))) then
+
 	    	blee.done = true
 	    	client:setPlayerData( blee )
 	    	blee = client:getPlayerData()
@@ -263,7 +265,7 @@ local function onClientData( client, data )
 		end
 		for i=1,j do
 			if ( not (isMyTeamDone[i].done == true) ) then
-				break end
+				break
 			end
 			--if I've reached this point then that means the team is done and we can move on to the next challenge
 			game.data.teamData[teamIndex].currentChallenge.done = true -- might need to get and set the game data...
