@@ -145,6 +145,10 @@ local function onGameStart( game, players )
 	p(game:getData())
 
 	teamGameTable = {}
+	
+	for i, game.data.teams do
+		teamGameTable[i].players = {}
+	end
 
 	local i = 1
 	for key,value in pairs(playersTable) do 
@@ -155,8 +159,7 @@ local function onGameStart( game, players )
 	    data.done = false
 	    playersTable[key]:setPlayerData( data )
 	    playersTable[key]:send( { yourTeam = allTeams[index] } )
-	    -- teamGameTable[index].players = {}
-	    -- teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
+	    teamGameTable[index].players[i] = playersTable[key] --holding onto each client in the team table to make sending easier later
 	    						--to nerf through this array we will need to mod by the number of teams
 	    i = i+1
 	end
@@ -263,7 +266,7 @@ local function onClientData( client, data )
 		end
 		for i=1,j do
 			if ( not (isMyTeamDone[i].done == true) ) then
-				break end
+				break
 			end
 			--if I've reached this point then that means the team is done and we can move on to the next challenge
 			game.data.teamData[teamIndex].currentChallenge.done = true -- might need to get and set the game data...
